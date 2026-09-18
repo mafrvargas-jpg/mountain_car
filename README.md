@@ -368,45 +368,109 @@ Visualizar DQN:
 
 ## 16. Tecnologías utilizadas
 
-- Python
-- Gymnasium
-- NumPy
-- PyTorch
-- uv
-- Git
-- GitHub Codespaces
+Durante el desarrollo del proyecto se utilizaron las siguientes tecnologías y herramientas:
+
+- **Python:** lenguaje principal utilizado para la implementación de los agentes de aprendizaje por refuerzo.
+- **Gymnasium:** utilizado para trabajar con el entorno `MountainCar-v0` y realizar la interacción entre los agentes y el entorno.
+- **NumPy:** utilizado para el manejo de estados y operaciones numéricas.
+- **PyTorch:** utilizado para construir, entrenar y actualizar la red neuronal del agente DQN.
+- **uv:** utilizado para la gestión del entorno y ejecución de los comandos del proyecto.
+- **Git:** utilizado para el control de versiones y seguimiento de los cambios realizados.
+- **GitHub Codespaces:** utilizado como entorno de desarrollo para implementar, ejecutar y probar el proyecto.
+- **GitHub:** utilizado para almacenar y publicar el repositorio del proyecto.
 
 ---
 
 ## 17. Archivos principales
 
-### `qlearning.py`
+El proyecto está organizado en diferentes archivos que permiten implementar, ejecutar y evaluar los agentes de aprendizaje por refuerzo.
 
-Contiene la implementación del agente Q-Learning, incluyendo la discretización de estados, selección de acciones y actualización de la Q-Table.
+### `src/mountain_car/agents/qlearning.py`
 
-### `dqn.py`
+Contiene la implementación del agente **Q-Learning**.
 
-Contiene la implementación del DQN, incluyendo:
+Entre sus principales componentes se encuentran:
 
-- `QNetwork`
-- `ReplayBuffer`
-- `DQNAgent`
-- Experience Replay
-- Target Network
-- Actualización mediante gradiente
-- Estrategia de exploración temporalmente correlacionada
+- Discretización del estado continuo de `MountainCar-v0`.
+- Manejo de la **Q-Table**.
+- Selección de acciones mediante estrategia **ε-greedy**.
+- Exploración y explotación del espacio de acciones.
+- Actualización de los valores de la Q-Table mediante la ecuación de Q-Learning.
+
+El agente transforma el estado continuo del entorno, compuesto por posición y velocidad, en estados discretos que pueden ser representados en la Q-Table.
+
+### `src/mountain_car/agents/dqn.py`
+
+Contiene la implementación del agente **Deep Q-Network (DQN)**.
+
+Entre sus principales componentes se encuentran:
+
+- `QNetwork`: red neuronal utilizada para aproximar los valores Q.
+- `ReplayBuffer`: almacenamiento de experiencias obtenidas durante la interacción con el entorno.
+- `DQNAgent`: agente encargado del entrenamiento y selección de acciones.
+- **Experience Replay:** permite entrenar utilizando muestras de experiencias almacenadas.
+- **Target Network:** proporciona los valores objetivo utilizados durante el aprendizaje.
+- Cálculo de la función de pérdida.
+- Actualización de los parámetros de la red mediante retropropagación.
+- Optimizador Adam.
+- Estrategia de exploración temporalmente correlacionada para mejorar la recolección de experiencias en `MountainCar-v0`.
+
+### `src/mountain_car/cli.py`
+
+Contiene la interfaz de línea de comandos utilizada para ejecutar las diferentes etapas del proyecto, incluyendo entrenamiento, carga de modelos y evaluación.
+
+### `saves/`
+
+Carpeta utilizada para almacenar los modelos entrenados y permitir posteriormente su carga y evaluación.
 
 ---
 
 ## 18. Resultado final
 
-El proyecto permitió implementar, entrenar y evaluar dos algoritmos de aprendizaje por refuerzo sobre MountainCar-v0.
+El proyecto permitió implementar, entrenar y evaluar dos métodos de aprendizaje por refuerzo sobre el entorno `MountainCar-v0`: **Q-Learning** y **Deep Q-Network (DQN)**.
 
-Los resultados obtenidos fueron:
+Durante el desarrollo se realizaron pruebas independientes para validar el funcionamiento de los algoritmos y analizar su comportamiento en el entorno.
 
-| Algoritmo | Reward | Éxito |
+### Resultados de Q-Learning
+
+El agente Q-Learning fue entrenado durante **20.000 episodios** utilizando una representación discretizada del estado.
+
+En la evaluación final se obtuvieron los siguientes resultados:
+
+- **Recompensa media:** `-144.80 ± 14.65`
+- **Episodios evaluados:** 10
+- **Episodios que alcanzaron la bandera:** **10/10**
+- **Estados visitados:** 300 de 400
+
+El modelo entrenado logró alcanzar la bandera durante todos los episodios de evaluación realizados.
+
+### Resultados de DQN
+
+El agente DQN fue implementado utilizando una **Q-Network**, un **Replay Buffer** y una **Target Network**.
+
+Como parte de la validación, primero se probó el funcionamiento del aprendizaje del DQN en `CartPole-v1`. Posteriormente se evaluó su comportamiento en `MountainCar-v0`.
+
+En el entrenamiento inicial de MountainCar se observó que el agente permanecía alrededor de una recompensa de `-200`. A partir del análisis del entorno y de las pruebas realizadas, se identificó una dificultad asociada a la estrategia de exploración.
+
+Debido a la dinámica de `MountainCar-v0`, alcanzar la bandera requiere realizar secuencias de movimientos que permitan generar suficiente impulso. Por esta razón, la exploración mediante acciones independientes podía dificultar la obtención de experiencias exitosas.
+
+Para abordar esta situación se implementó una estrategia de exploración **temporalmente correlacionada**, manteniendo una misma acción exploratoria durante varios pasos consecutivos y reiniciando el estado de exploración al comenzar cada episodio.
+
+Después de este ajuste, el DQN fue entrenado durante **2.500 episodios**.
+
+En la evaluación final se obtuvieron:
+
+- **Recompensa media:** `-102.30 ± 6.56`
+- **Episodios evaluados:** 10
+- **Episodios que alcanzaron la bandera:** **10/10**
+
+### Comparación de resultados
+
+| Algoritmo | Recompensa media | Episodios exitosos |
 |---|---:|---:|
 | Q-Learning | **-144.80 ± 14.65** | **10/10** |
 | DQN | **-102.30 ± 6.56** | **10/10** |
 
-Estos resultados corresponden a las evaluaciones realizadas sobre los modelos entrenados durante el desarrollo del proyecto.
+Los resultados corresponden a las evaluaciones realizadas sobre los modelos entrenados durante el desarrollo del proyecto.
+
+La comparación permite observar el comportamiento de los dos enfoques implementados: Q-Learning utiliza una representación tabular de los estados discretizados, mientras que DQN utiliza una red neuronal para aproximar los valores Q. Ambos modelos lograron alcanzar la bandera en los episodios de evaluación realizados.
