@@ -421,8 +421,7 @@ Contiene la interfaz de línea de comandos utilizada para ejecutar las diferente
 
 ### `saves/`
 
-Carpeta utilizada para almacenar los modelos entrenados y permitir posteriormente su carga y evaluación.
-
+Carpeta destinada al almacenamiento local de los modelos generados durante el entrenamiento. Los archivos de los modelos no se incluyen en el repositorio debido a la configuración del `.gitignore`.
 ---
 
 ## 18. Resultado final
